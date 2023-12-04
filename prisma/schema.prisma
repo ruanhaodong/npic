@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NodeType {
+  person
+  item
+  area
+  story
+}
+
+model Node {
+  id        String   @id @default(uuid())
+  type      NodeType 
+  npc_id    String?  @unique
+  npc       Npc?     @relation(fields: [npc_id], references: [npc_id])
+  memory_id String?
+  memory    Memory?  @relation(fields: [memory_id], references: [id])
+}
+
+model Npc {
+  id          String   @id @default(uuid())
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  npc_id      String   @unique
+  fullname    String
+  npc_profile Json?
+  family      Json?
+  relations   Json?
+
+  Node   Node?
+  Memory Memory[]
+
+  @@index([npc_id])
+}
+
+// model Relation {
+//   id       String  @id @default(uuid())
+//   from_id     String
+//   from        Node @relation("relationFrom", fields: [from_id], references: [npc_id])
+//   to_id       String
+//   to          Node @relation("relationTo", fields: [to_id], references: [npc_id])
+//   role     String
+//   affinity Int
+
+// }
+
+model WorldRule {
+  id               String  @id @default(uuid())
+  name             String?
+  background_story String?
+  map              Map[]
+}
+
+model Map {
+  id            String     @id @default(uuid())
+  areas         Json?
+  jsonData      Json?
+  worldrule     WorldRule? @relation(fields: [worldrule_id], references: [id])
+  worldrule_id  String?
+  background_id String?
+}
+
+model Memory {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  bornAt     Int
+  npc_id     String?
+  npc        Npc?     @relation(fields: [npc_id], references: [npc_id])
+  Node       Node[]
+  age        Int?
+  ctx        String?
+  emoji      String?
+}

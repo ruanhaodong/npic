@@ -1,0 +1,9 @@
+{
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "compilerOptions": {
+    // "skipLibCheck": false,
+    "verbatimModuleSyntax": false
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": "./.nuxt/tsconfig.json"
+}
